@@ -1,0 +1,134 @@
+﻿<Window x:Class="WpfApplication1.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApplication1"
+        mc:Ignorable="d"
+        Title="Результат матча" Height="500" Width="525">
+    <Window.Resources>
+        <local:TeamColorConverter x:Key="StringToColorConverter"></local:TeamColorConverter>
+    </Window.Resources>
+    <Window.DataContext>
+        <local:MainWindowViewModel></local:MainWindowViewModel>
+    </Window.DataContext>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="5*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="5*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" FontSize="18" Margin="5" VerticalAlignment="Center">Забитые мячи</TextBlock>
+        <TextBlock Grid.Row="3"  FontSize="18" Margin="5" VerticalAlignment="Center">Нарушения правил</TextBlock>
+        <TextBlock Grid.Row="5"  FontSize="18" Margin="5" VerticalAlignment="Center">Итоговый счёт</TextBlock>
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1.5*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1.5*"/>
+                    <ColumnDefinition Width="3*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Margin="5" FontSize="15">Игрок</TextBlock>
+                <TextBlock Grid.Column="1" Margin="5" FontSize="15">Время</TextBlock>
+                <TextBlock Grid.Column="2" Margin="5" FontSize="15">В пользу</TextBlock>
+            </Grid>
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="1">
+                <ItemsControl ItemsSource="{Binding Path=goal}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="0,4.5,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="2*"/>
+                                    <ColumnDefinition Width="1*"/>
+                                    <ColumnDefinition Width="2*"/>
+                                    <ColumnDefinition Width="3*"/>
+                                </Grid.ColumnDefinitions>
+                                <ComboBox Grid.Column="0" ItemsSource="{Binding player}"
+                                      SelectedItem="{Binding _selectedPlayer}" Margin="5"></ComboBox>
+                                <TextBox Grid.Column="1" Text="{Binding time}" Margin="5"></TextBox>
+                                <StackPanel Grid.Column="2" Orientation="Horizontal">
+                                    <ComboBox Grid.Column="2" Width="100" ItemsSource="{Binding team}"
+                                      SelectedItem="{Binding _selectedTeam}" Margin="5,0,5,0" ></ComboBox>
+                                    <Rectangle Width="20" Height="20" Fill="{Binding _selectedTeam, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ResourceKey=StringToColorConverter}}" ></Rectangle>
+                                </StackPanel>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+            <Button Content="+" Grid.Row="2" Grid.Column="0" Width="70" Height="35" HorizontalAlignment="Center" Margin="240,4,211,0"
+                    Command="{Binding AddGoalButton}" CommandParameter="{Binding}"
+                    VerticalAlignment="Center">
+            </Button>
+        </Grid>
+        <Grid Grid.Row="4">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" FontSize="15" Margin="5">Игрок</TextBlock>
+                <TextBlock Grid.Column="1" Margin="5" FontSize="15" >Время</TextBlock>
+                <TextBlock Grid.Column="2" Margin="5" FontSize="15" >Вид нарушения</TextBlock>
+                <TextBlock Grid.Column="3" Margin="5" FontSize="15" >Наказание</TextBlock>
+            </Grid>
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="1">
+                <ItemsControl ItemsSource="{Binding Path=fouls}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="0,5,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="2*"/>
+                                    <ColumnDefinition Width="1*"/>
+                                    <ColumnDefinition Width="2*"/>
+                                    <ColumnDefinition Width="2*"/>
+                                    <ColumnDefinition Width="2*"/>
+                                </Grid.ColumnDefinitions>
+                                <ComboBox Grid.Column="0" ItemsSource="{Binding player}"
+                                      SelectedItem="{Binding _selectedPlayer}" Margin="5,0,5,0"></ComboBox>
+                                <TextBox Grid.Column="1" Text="{Binding timeoffoul}" Margin="5,0,5,0"></TextBox>
+                                <ComboBox Grid.Column="2" ItemsSource="{Binding fouls}"
+                                      SelectedItem="{Binding _selectedFoul}" Margin="5,0,5,0"></ComboBox>
+                                <ComboBox Grid.Column="3" ItemsSource="{Binding punishment}"
+                                      SelectedItem="{Binding _selectedPunishment}" Margin="5,0,5,0"></ComboBox>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+            <Button Content="+" Grid.Row="2" Grid.Column="0" Width="70" Height="35" HorizontalAlignment="Center" Margin="240,4,211,0"
+                    Command="{Binding AddFoulButton}" CommandParameter="{Binding}"
+                    VerticalAlignment="Center">
+            </Button>
+        </Grid>
+        <Grid Grid.Row="7">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="15" Margin="5">Спартак (Москва)</TextBlock>
+            <TextBlock Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15" Text="{Binding Path=result, Mode=TwoWay}"></TextBlock>
+            <TextBlock Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="15" Margin="5">Локомотив(Москва)</TextBlock>
+        </Grid>
+    </Grid>
+</Window>
