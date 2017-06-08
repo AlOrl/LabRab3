@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using System.Windows.Input;
+using System.Data.SqlClient;
 
 namespace WpfApplication1
 {
@@ -65,5 +67,51 @@ namespace WpfApplication1
                 PropertyChanged(this, new PropertyChangedEventArgs(name));
             }
         }
+        private ICommand _clickCommand;
+        public ICommand ClickCommand
+        {
+            get
+            {
+                return _clickCommand ?? (_clickCommand = new CommandHandler(() => PlayStat(_selectedPlayer, time, selectedTeam), _canExecute));
+
+            }
+        }
+       
+        public static void PlayStat(string player, string time, string team)
+        {
+            using (SqlConnection cn = new SqlConnection("Server=GRISHA-PC\\SQLEXPRESS; Database = myDataBase; Trusted_Connection = True;"))
+            {
+                cn.Open();
+                string sql = string.Format("INSERT INTO Table(name, time, team) values ('{0}','{1}','{2}')", player, time, team);
+                SqlCommand cmd = new SqlCommand(sql, cn);
+                cmd.ExecuteNonQuery();
+
+            }
+        }
+        private bool _canExecute;
+    }
+
+    public class CommandHandler : ICommand
+    {
+        private Action _action;
+        private bool _canExecute;
+        public CommandHandler(Action action, bool canExecute)
+        {
+            _action = action;
+            _canExecute = canExecute;
+        }
+
+        public bool CanExecute(object parameter)
+        {
+            return _canExecute;
+        }
+
+        public event EventHandler CanExecuteChanged;
+
+        public void Execute(object parameter)
+        {
+            _action();
+        }
+
     }
 }
